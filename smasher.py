@@ -60,16 +60,21 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    logging.basicConfig(
-        format="[%(levelname)s][%(filename)s:%(lineno)d]: %(message)s",
+    file_handler = logging.FileHandler("{}.log".format(args.logic_addr), mode="w")
+    file_handler.setLevel(logging.INFO if args.verbose else logging.WARNING)
+    formatter = logging.Formatter(
+        fmt="[%(levelname)s][%(filename)s:%(lineno)d]: %(message)s",
         datefmt="%Y.%m.%d. %H:%M:%S",
     )
-    rootLogger = logging.getLogger(None)
+    file_handler.setFormatter(formatter)
 
-    if args.verbose:
-        rootLogger.setLevel(level=logging.INFO)
-    else:
-        rootLogger.setLevel(level=logging.WARNING)
+    root_logger = logging.getLogger()
+    root_logger.handlers = []
+    root_logger.addHandler(file_handler)
+
+    root_logger.setLevel(logging.INFO if args.verbose else logging.WARNING)
+
+    log = logging.getLogger(__name__)
 
     contracts = {}
     # default: storage_addr is the same as logic_addr
@@ -78,7 +83,7 @@ if __name__ == "__main__":
         storage_addr = args.logic_addr
     else:
         storage_addr = args.storage_addr
-    logging.info("testing function signature {}...".format(args.func_sign))
+    log.info("testing function signature {}...".format(args.func_sign))
     source = {
         "platform": args.platform,
         "logic_addr": args.logic_addr,
@@ -223,11 +228,6 @@ if __name__ == "__main__":
         "visited_funcs": [],
         "visited_funcs_num": 0,
         "max_call_depth": 0,
-        "contract_funcsigs": [],
-        "contract_funcsigs_external_call": [],
-        "sensitive_callsigs": [],
-        "overlap": {"has_overlap": False, "overlap_external_call": []},
-        "reentrancy_path_info": {},
     }
 
     result["is_attack"], result["attack_matrix"] = detector.detect()
@@ -249,9 +249,6 @@ if __name__ == "__main__":
     result["semantic_features"][
         "op_selfdestruct"
     ] = detector.semantic_analysis.op_selfdestruct_analysis()
-    result["semantic_features"][
-        "op_env"
-    ] = detector.flow_analysis.tainted_env_call_arg()
 
     result["external_call"][
         "externalcall_inhook"
@@ -260,50 +257,7 @@ if __name__ == "__main__":
         "externalcall_infallback"
     ] = detector.semantic_analysis.externalcall_infallback()
 
-    sensitive_callsigs = detector.get_sig_info()
-    victim_callback_info, attack_reenter_info = detector.get_reen_info()
-
     res = {}
-    for i in victim_callback_info.keys():
-        res[i] = {
-            "victim_call": victim_callback_info[i],
-            "reenter_call": attack_reenter_info[i],
-        }
-    result["reentrancy_path_info"] = res
-
-    result["sensitive_callsigs"] = list(set(sensitive_callsigs))
-
-    result["contract_funcsigs"] = func_sign_list
-    result["contract_funcsigs_external_call"] = (
-        store_external_call_in_func_sigature_list
-    )
-
-    # find whether there is a callback to the function that contains external call
-    overlap = list(
-        set(sensitive_callsigs).intersection(
-            set(store_external_call_in_func_sigature_list)
-        )
-    )
-    if len(overlap) > 0:
-        result["overlap"]["has_overlap"] = True
-        for i in overlap:
-            result["overlap"]["overlap_external_call"].append(i)
-
-    if (
-        result["semantic_features"]["op_creation"]["op_multicreate"]
-        or result["semantic_features"]["op_creation"]["op_solecreate"]
-        or result["semantic_features"]["op_selfdestruct"]
-        or result["semantic_features"]["op_env"]
-    ):
-        result["warning"] = "high"
-
-    # just has overlap, lift the warning
-    if result["overlap"]["has_overlap"]:
-        result["warning"] = "high"
-
-    if result["external_call"]["externalcall_inhook"]:
-        result["warning"] = "high"
-
     if is_createbin:
         result["analysis_loc"] = "createbin"
     else:

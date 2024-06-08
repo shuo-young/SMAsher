@@ -51,16 +51,19 @@ Leslie_SM_TaintedSourceCallArg(funcSign, callStmt, callArgIndex-1) :-
 .decl Leslie_SM_TaintedVar(funcSign: symbol, slot:Value, var: Variable)
 .output Leslie_SM_TaintedVar
 Leslie_SM_TaintedVar(funcSign, slot, key) :-
-  (PublicFunctionArg(_, var, _);CALLER(_, var);ORIGIN(_, var)), // external factors
+  (PublicFunctionArg(_, var, _);CALLER(_, var);ORIGIN(_, var)),
   DataFlows(var, key),
-  StoreGlobalVariable(stmt, slot, key),
+  (StoreGlobalVariable(stmt, slot, key);StoreToDataStructure(stmt, slot, key)),
   Leslie_Statement_Function(stmt, func),
   PublicFunctionSelector(func, funcSign).
 
+// should add another rule to capture that the funcarg can be the key of mappings to store
 Leslie_SM_TaintedVar(funcSign, slot, key) :-
   (PublicFunctionArg(_, var, _);CALLER(_, var);ORIGIN(_, var)),
   DataFlows(var, key),
-  StoreToDataStructure(stmt, slot, key),
+  SHA3_2ARG(_, key, _, def),
+  SSTORE(stmt, def, _),
+  (StoreGlobalVariable(stmt, slot, _);StoreToDataStructure(stmt, slot, _)),
   Leslie_Statement_Function(stmt, func),
   PublicFunctionSelector(func, funcSign).
 
@@ -71,31 +74,92 @@ Leslie_SM_TaintedSlot(slotNum) :-
   StoreGlobalVariable(_, slotNum, var2),
   DataFlows(var1, var2).
 
+// another trace: tainted states that could flow to the sink sites
+// intraprocedure analysis
+// .decl Leslie_SM_StateVarToSensitiveVar(funcSign: symbol, slot:Value, stateVar:Variable, sensitiveVar:Variable)
+// .output Leslie_SM_StateVarToSensitiveVar
+// Leslie_SM_StateVarToSensitiveVar(funcSign, slot, var, to) :-
+//   Leslie_SM_SensitiveVar(funcSign, slot, _, to),
+//   Leslie_Statement_Function(stmt, funcSign).
+
+.decl Leslie_SM_StateVarToFuncReturn(funcSign: symbol, slot:Value, key:Variable, retIndex:number, ret:Variable)
+.output Leslie_SM_StateVarToFuncReturn
+Leslie_SM_StateVarToFuncReturn(funcSign, slot, var, funcRetIndex, funcRet) :-
+  RETURN(returnStmt, _, _),
+  Leslie_Statement_Function(returnStmt, func),
+  StatementUsesMemory_ActualMemoryArg(returnStmt, _, funcRetIndex, funcRet),
+  (LoadGlobalVariable(_, slot, var);LoadFromDataStructure(_, slot, _, var)),
+  DataFlows(var, funcRet),
+  Leslie_FunctionSelector(func, funcSign).
+
 // the sink, the state manipulation usage to withdraw the transferred amount
 // the recipient is always the attacker contract and the amount is subjected to the sensitive var, which could flow to the sink call args
 // the flow rules are based on the leslie spread functions
-.decl Leslie_SM_SensitiveCall(callStmt:Statement, recipient:Variable, amount:Variable)
+// as the amount can be the variable of the private func arg, we use public func to confine
+.decl Leslie_SM_SensitiveCall(funcSign: symbol, callStmt:Statement, recipient:Variable, amount:Variable)
 .output Leslie_SM_SensitiveCall
-Leslie_SM_SensitiveCall(callStmt, recipient, amount) :-
+Leslie_SM_SensitiveCall(funcSign, callStmt, recipient, amount) :-
   CallToSignature(callStmt, "transfer(address,uint256)"),
   StatementUsesMemory_ActualMemoryArg(callStmt, _, 1, recipient),
-  StatementUsesMemory_ActualMemoryArg(callStmt, _, 2, amount).
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 2, amount),
+  Leslie_Statement_Function(callStmt, func),
+  PublicFunctionSelector(func, funcSign).
 
-Leslie_SM_SensitiveCall(callStmt, recipient, amount) :-
+Leslie_SM_SensitiveCall(funcSign, callStmt, recipient, amount) :-
   CallToSignature(callStmt, "transferFrom(address,address,uint256)"),
   StatementUsesMemory_ActualMemoryArg(callStmt, _, 2, recipient),
-  StatementUsesMemory_ActualMemoryArg(callStmt, _, 3, amount).
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 3, amount),
+  Leslie_Statement_Function(callStmt, func),
+  PublicFunctionSelector(func, funcSign).
 
-Leslie_SM_SensitiveCall(callStmt, recipient, amount) :-
-  !StatementUsesMemory_ActualMemoryArg(callStmt, _, _, _),
-  CALL(callStmt, _, recipient, amount, _, _, _, _, _).
+Leslie_SM_SensitiveCall(funcSign, callStmt, recipient, amount) :-
+  Leslie_ExternalCall_FuncSign_ConstType(_, callStmt, "0xa9059cbb"),
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 1, recipient),
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 2, amount),
+  Leslie_Statement_Function(callStmt, func),
+  PublicFunctionSelector(func, funcSign).
 
+// remained to be considered
+// Leslie_SM_SensitiveCall(callStmt, recipient, amount) :-
+//   !StatementUsesMemory_ActualMemoryArg(callStmt, _, _, _),
+//   CALL(callStmt, _, recipient, amount, _, _, _, _, _).
+
+.decl Leslie_SM_SensitiveSink(funcSign: symbol, callStmt:Statement, recipient:Variable, recipientIndex:number, amount:Variable)
+.output Leslie_SM_SensitiveSink
+Leslie_SM_SensitiveSink(funcSign, callStmt, recipient, recipientIndex, amount) :-
+  CallToSignature(callStmt, "transfer(address,uint256)"),
+  recipientIndex = 0, // 1-1
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 1, recipient),
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 2, amount),
+  Leslie_Statement_Function(callStmt, func),
+  PublicFunctionSelector(func, funcSign).
+
+Leslie_SM_SensitiveSink(funcSign, callStmt, recipient, recipientIndex, amount) :-
+  CallToSignature(callStmt, "transferFrom(address,address,uint256)"),
+  recipientIndex = 1, // 2-1
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 2, recipient),
+  StatementUsesMemory_ActualMemoryArg(callStmt, _, 3, amount),
+  Leslie_Statement_Function(callStmt, func),
+  PublicFunctionSelector(func, funcSign).
+
+.decl Leslie_SM_CallRetToSensitiveVar(funcSign:symbol, callStmt:Statement, callRetVar:Variable, callRetIndex:number, sensitiveVar:Variable)
+.output Leslie_SM_CallRetToSensitiveVar
+Leslie_SM_CallRetToSensitiveVar(funcSign, callStmt, callRetVar, callRetIndex, sensitiveVar) :-
+  ExternalCall_ActualReturn(callStmt, callRetVar, callRetIndex),
+  Leslie_SM_SensitiveVar(funcSign, _, _, sensitiveVar),
+  DataFlows(callRetVar, sensitiveVar),
+  Leslie_Statement_Function(callStmt, func),
+  PublicFunctionSelector(func, funcSign).
+
+// we program the intra analysis that state directly flows to the amount var in this rule
 .decl Leslie_SM_SensitiveVar(funcSign: symbol, slot:Value, recipient:Variable, amount:Variable)
 .output Leslie_SM_SensitiveVar
 Leslie_SM_SensitiveVar(funcSign, slot, recipient, amount) :-
-  (LoadGlobalVariable(stmt, slot, var);LoadFromDataStructure(stmt, slot, _, var)),
-  DataFlows(var, amount),
-  Leslie_SM_SensitiveCall(callStmt, recipient, amount), // amount is loaded from the global var
+  (LoadGlobalVariable(stmt, slot, svar);LoadFromDataStructure(stmt, slot, _, svar)),
+  DataFlows(svar, amount),
+  (PublicFunctionArg(_, var, _);CALLER(_, var);ORIGIN(_, var)),
+  DataFlows(var, recipient),
+  Leslie_SM_SensitiveCall(funcSign, callStmt, recipient, amount), // amount => loaded from the global var(intra) or from external call ret(inter)
   Leslie_Statement_Function(callStmt, func),
   Leslie_Statement_Function(stmt, func),
   PublicFunctionSelector(func, funcSign).
@@ -103,11 +167,10 @@ Leslie_SM_SensitiveVar(funcSign, slot, recipient, amount) :-
 .decl Leslie_SM_FuncArgToSensitiveVar(funcSign:symbol, funcArg:Variable, funcArgIndex:number, sensitiveVar:Variable)
 .output Leslie_SM_FuncArgToSensitiveVar
 Leslie_SM_FuncArgToSensitiveVar(funcSign, funcArg, funcArgIndex, sensitiveVar) :-
-  Leslie_SM_SensitiveVar(_, _, sensitiveVar, _),
+  Leslie_SM_SensitiveVar(funcSign, _, sensitiveVar, _),
   PublicFunctionArg(func, funcArg, funcArgIndex),
   DataFlows(funcArg, sensitiveVar),
   PublicFunctionSelector(func, funcSign).
-
 
 // !External Calls
 // restore external call info
@@ -206,6 +269,15 @@ Leslie_Spread_FuncArgToFuncRet(funcSign, funcArgIndex, funcArg, funcRetIndex, fu
   Leslie_Statement_Function(returnStmt, func),
   StatementUsesMemory_ActualMemoryArg(returnStmt, _, funcRetIndex, funcRet),
   DataFlows(funcArg, funcRet).
+
+// sma: funcarg to storage
+.decl Leslie_Spread_FuncArgToTaintedVar(funcSign:symbol, funcArgIndex:number, funcArg:Variable, slot:Value, key:Variable)
+.output Leslie_Spread_FuncArgToTaintedVar
+Leslie_Spread_FuncArgToTaintedVar(funcSign, funcArgIndex, funcArg, slot, key) :-
+  Leslie_FunctionSelector(func, funcSign),
+  PublicFunctionArg(func, funcArg, funcArgIndex),
+  Leslie_SM_TaintedVar(funcSign, slot, key),
+  DataFlows(funcArg, key).
 
 // !Restore funcSign
 // call to const function

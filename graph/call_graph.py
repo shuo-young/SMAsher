@@ -62,11 +62,11 @@ class CallGraph:
         contracts = self.contracts
         pending = []
         pending.append(source)
+        logging.info("decompiling and constructing cross-contract call graph")
 
         index = 0
         while len(pending) > 0:
             temp = pending.pop()
-            # print("current contract: ", temp)
             temp["platform"] = self.platform
             index += 1
             if temp["level"] > self.max_level:
@@ -95,6 +95,18 @@ class CallGraph:
                 + "_"
                 + temp["func_sign"]
             )
+            logging.info(
+                "     " * temp["level"]
+                + temp["caller"]
+                + "_"
+                + temp["caller_func_sign"]
+                + "_"
+                + temp["call_site"]
+                + " -> "
+                + temp["logic_addr"]
+                + "_"
+                + temp["func_sign"]
+            )
             self.output = (
                 self.output
                 + "     " * temp["level"]
@@ -110,11 +122,6 @@ class CallGraph:
                 + "\n"
             )
             if temp_key in contracts.keys():
-                # print("yes")
-                # print(temp_key)
-                # print(
-                #     contracts[temp_key].external_calls
-                # )  # not print the path but exist in the graph
                 continue
 
             if temp["logic_addr"] not in self.visited_contracts:

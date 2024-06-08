@@ -47,111 +47,180 @@ class AttackIdentifier:
 
         result = False
 
-        # br and dos detection
-        if self.semantic_analysis.intraprocedural_br_analysis():
-            self.attack_matrix["br"] = True
-
-        if self.semantic_analysis.intraprocedural_dos_analysis():
-            self.attack_matrix["dos"] = True
-
-        if self.flow_analysis.intraprocedural_fla_analysis():
-            log.info("intraprocedural analysis true of flashloan attack")
-            print("intraprocedural analysis true of flashloan attack")
-            self.attack_matrix["price_manipulation"] = True
-        else:
-            # define the vulnerable trace
-            pps_near_fl_source = self.flow_analysis.get_pps_near_fl_source()
-            pps_near_fl_sink = self.flow_analysis.get_pps_near_fl_sink()
-            self.attack_matrix["price_manipulation"] = (
-                self.flow_analysis.find_potential_price_manipulation_attack(
-                    pps_near_fl_source, pps_near_fl_sink
-                )
-            )
-
         if self.semantic_analysis.op_externalcall_callback_analysis():
             self.attack_matrix["price_manipulation"] = True
 
         # so how to define the tainted source
         # !the tainted source should only be from the analyzed contracts (i.e., input contract)
-        pps_near_source = self.flow_analysis.get_pps_near_source()
+        pps_near_source = self.flow_analysis.get_source_pps()
         # and how to define the sentive sink
-        pps_near_sink, sensitive_callsigs = self.flow_analysis.get_pps_near_sink()
+        pps_near_sink = self.flow_analysis.get_sink_pps()
 
         # set call sigs in the sink site
-        self.sensitive_callsigs = sensitive_callsigs
+        self.sensitive_callsigs = []
 
         reachable = False
-        reachable_site = {}
 
-        # for every source, find whether one sink can be reached
+        tainted_pps = []
+        source_taint_trace = []
+
+        # for the source to taint
         for pp1 in pps_near_source:
+            pending = [pp1]
+            log.info("analyzing tainted source: {}".format(pp1))
+            while len(pending) > 0:
+                temp_pp = pending.pop()
+                next_pps = self.flow_analysis.transfer(temp_pp)
+                if len(next_pps) > 0:
+                    for pp in next_pps:
+                        tainted_slot = self.flow_analysis.spread_funcArg_taintedVar(
+                            pp["contract_addr"], pp["func_sign"], pp["index"]
+                        )
+                        if len(tainted_slot) > 0:
+                            trace = (pp1, pp, list(set(tainted_slot)))
+                            tainted_pps.append(pp)
+                            source_taint_trace.append(trace)
+                            log.info(
+                                "tainted trace that changes states by source: {}".format(
+                                    trace
+                                )
+                            )
+                        pending.append(pp)
+                else:  # = current pp has no transfer
+                    tainted_slot = self.flow_analysis.spread_funcArg_taintedVar(
+                        temp_pp["contract_addr"], temp_pp["func_sign"], temp_pp["index"]
+                    )
+                    if len(tainted_slot) > 0:
+                        trace = (pp1, temp_pp, list(set(tainted_slot)))
+                        tainted_pps.append(temp_pp)
+                        source_taint_trace.append(trace)
+                        log.info(
+                            "tainted trace that changes states by source: {}".format(
+                                trace
+                            )
+                        )
+        log.info("finish analyzing source to taint states traces")
+        log.info("source to taint states traces: {}".format(source_taint_trace))
+        log.info("tainted pps: {}".format(tainted_pps))
+
+        # from the source to sink
+        # for every source, find whether one sink can be reached
+        log.info("begin to analyze the source flow to sink")
+        for pp1 in pps_near_source:
+            # log.info("analyzing source: {}".format(pp1))
             for pp2 in pps_near_sink:
                 if self.flow_analysis.is_same(pp1, pp2):
-                    reachable = True
-                    caller = pp2["caller"]
-                    caller_funcSign = pp2["caller_funcSign"]
-                    reachable_site[pp2["func_sign"]] = {
-                        "caller": caller,
-                        "caller_callback_funcSign": caller_funcSign,
-                    }
-                elif self.flow_analysis.is_reachable(pp1, pp2):
-                    reachable = True
-                    caller = pp2["caller"]
-                    caller_funcSign = pp2["caller_funcSign"]
-                    reachable_site[pp2["func_sign"]] = {
-                        "caller": caller,
-                        "caller_callback_funcSign": caller_funcSign,
-                    }
+                    log.info("found same pp {}, {}".format(pp1, pp2))
+                    involved_states = (
+                        self.flow_analysis.get_state_flow_to_amount_by_callsite(
+                            pp2["caller"], pp2["callsite"], pp2["caller_funcSign"]
+                        )
+                    )
+                    log.info(
+                        "the sink site read states from itself involved: {}".format(
+                            involved_states
+                        )
+                    )
+                    for trace in source_taint_trace:
+                        if trace[1]["contract_addr"] == pp2["caller"]:
+                            bool = list(
+                                set(involved_states).intersection(set(trace[2]))
+                            )
+                            if bool:
+                                log.info(
+                                    "(intra) the read states are influenced by the source=>taint trace: {}".format(
+                                        trace
+                                    )
+                                )
+                                log.info(
+                                    "intra state manipulation in the same contract"
+                                )
 
-        victim_callback_info = {}
-        attack_reenter_info = {}
+                elif self.flow_analysis.is_reachable(pp1, pp2):
+                    log.info("found reachable pp {}, {}".format(pp1, pp2))
+                    involved_states = (
+                        self.flow_analysis.get_state_flow_to_amount_by_callsite(
+                            pp2["caller"], pp2["callsite"], pp2["caller_funcSign"]
+                        )
+                    )
+                    log.info(
+                        "the sink site read states from itself involved: {}".format(
+                            involved_states
+                        )
+                    )
+                    # intra analysis
+                    for trace in source_taint_trace:
+                        if trace[1]["contract_addr"] == pp2["caller"]:
+                            bool = list(
+                                set(involved_states).intersection(set(trace[2]))
+                            )
+                            if bool:
+                                log.info(
+                                    "(intra) the read states are influenced by the source=>taint trace: {}".format(
+                                        trace
+                                    )
+                                )
+                                log.info(
+                                    "intra state manipulation in the same contract"
+                                )
+                    # then we should check the whether the states are influenced by the source=>taint flow
+                    # inter analysis
+                    log.info("begin inter procedure analysis")
+                    # source: influenced state by source
+                    # sink: the ret2sink site of the sink contract
+                    # set the sink as the transfer amount
+                    pp2["index"] = 1  # magically for test
+                    for trace in source_taint_trace:
+                        contract_to_analysis = trace[1]
+                        log.info(
+                            "contract to analysis: {}".format(contract_to_analysis)
+                        )
+                        # find whether the tainted contract by precalls is called again for reading states
+                        sources, slot = self.flow_analysis.get_pps_near_state_source(
+                            contract_to_analysis["contract_addr"]
+                        )
+
+                        log.info(
+                            "the pre influenced contracts with their return states info: {}".format(
+                                slot
+                            )
+                        )
+                        for source in sources:
+                            # log.info("analyzing source: {}".format(source))
+                            if self.flow_analysis.is_same(source, pp2):
+                                reachable = True
+                                log.info(
+                                    "tainted states flow to sink from source: {}".format(
+                                        source
+                                    )
+                                )
+                                log.info(
+                                    "can be affected by state at slot {} of contract {} at the return of function {}".format(
+                                        slot[1][source["func_sign"]],
+                                        slot[0],
+                                        source["func_sign"],
+                                    )
+                                )
+                            elif self.flow_analysis.is_reachable(source, pp2):
+                                reachable = True
+                                log.info(
+                                    "tainted states flow to sink from source: {}".format(
+                                        source
+                                    )
+                                )
+                                log.critical(
+                                    "can be affected by state at slot {} of contract {} at the return of function {}".format(
+                                        slot[1][source["func_sign"]],
+                                        slot[0],
+                                        source["func_sign"],
+                                    )
+                                )
 
         if reachable:
-            # judge whether the attacker contract implements the sensitive functions (called by victims)
-            overlap = list(
-                set(sensitive_callsigs).intersection(
-                    set(self.external_call_in_func_sigature)
-                )
-            )
-            if len(overlap) > 0:
-                for i in overlap:
-                    victim_callback_info[i] = []
-                    attack_reenter_info[i] = []
-
-                    if i in reachable_site:
-                        if reachable_site[i] not in victim_callback_info[i]:
-                            victim_callback_info[i].append(reachable_site[i])
-                    for key in self.contracts.keys():
-                        if (
-                            str(self.contracts[key].func_sign) == str(i)
-                            and self.contracts[key].level == 0
-                        ):
-                            externall_calls = self.contracts[key].external_calls
-                            for ec in externall_calls:
-                                temp_target_address = ec["logic_addr"]
-                                temp_funcSign = ec["funcSign"]
-
-                                res = {
-                                    "reenter_target": temp_target_address,
-                                    "reenter_funcSign": temp_funcSign,
-                                }
-                                if (
-                                    res not in attack_reenter_info[i]
-                                    and temp_target_address in self.visited_contracts
-                                    and temp_funcSign in self.visited_funcs
-                                ):
-                                    attack_reenter_info[i].append(res)
-                            result = True
-                            self.attack_matrix["reentrancy"] = True
-        if (
-            self.semantic_analysis.double_call_to_same_contract()
-            or self.semantic_analysis.double_call_to_same_contract_by_storage()
-            or self.semantic_analysis.preset_call_in_standard_erc20_transfer()
-        ):
-            self.attack_matrix["reentrancy"] = True
-            result = True
-        self.victim_callback_info = victim_callback_info
-        self.attack_reenter_info = attack_reenter_info
+            # print("reachable")
+            log.info("reachable")
+            # print(result)
+            # print(self.attack_matrix)
         return result, self.attack_matrix
 
     def get_reen_info(self):

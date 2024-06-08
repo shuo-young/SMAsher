@@ -9,7 +9,7 @@ import global_params
 log = logging.getLogger(__name__)
 
 
-# Data structure of contracts in the tr}
+# Data structure of contracts
 class Contract:
 
     def __init__(
@@ -49,7 +49,7 @@ class Contract:
         self.createbin = False
         self.storage_space = {}
         # self.env_val = env_val
-        logging.info(
+        log.info(
             "known function args from the previous call: {}".format(self.callArgVals)
         )
         self.analyze()
@@ -70,10 +70,10 @@ class Contract:
         return self.external_call_in_func_sigature
 
     def analyze(self):
-        logging.info("analyzing " + self.logic_addr)
-        logging.info("caller " + self.caller)
-        logging.info("call_site " + self.call_site)
-        logging.info("func_sign " + self.func_sign)
+        log.info("analyzing " + self.logic_addr)
+        log.info("caller " + self.caller)
+        log.info("call_site " + self.call_site)
+        log.info("func_sign " + self.func_sign)
         self.set_url()
         self.download_bytecode()
         if os.path.exists(global_params.CONTRACT_PATH + self.logic_addr + ".hex"):
@@ -82,12 +82,12 @@ class Contract:
 
             self.set_callArgVals()
             self.set_knownArgVals()
-            logging.info(
+            log.info(
                 "call arg vals obtained from the previous contract call {}".format(
                     self.callArgVals
                 )
             )
-            logging.info(
+            log.info(
                 "known arg vals in the current contract call {}".format(
                     self.knownArgVals
                 )
@@ -97,7 +97,7 @@ class Contract:
                     # remove key 0x0 from the dict  func_sign_dict
                     del self.func_sign_dict["0x0"]
                 for func in self.func_sign_dict.keys():
-                    logging.info(
+                    log.info(
                         "set external calls in function " + self.func_sign_dict[func]
                     )
                     self.set_external_calls(func, self.func_sign_dict[func])
@@ -283,7 +283,7 @@ class Contract:
                 if temp_stmt not in self.knownArgVals.keys():
                     self.knownArgVals[temp_stmt] = {}
                 self.knownArgVals[temp_stmt][temp_index] = temp_callArgVal
-            logging.info(self.knownArgVals)
+            log.info(self.knownArgVals)
 
         # big overhead for rpc request
         if global_params.CALLARG_STORAGETYPE:
@@ -640,7 +640,7 @@ class Contract:
                                 external_call["logic_addr"] = self.callArgVals[
                                     temp_index
                                 ]
-                                logging.info(
+                                log.info(
                                     "known target vals: {}".format(
                                         external_call["logic_addr"]
                                     )
