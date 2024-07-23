@@ -7,7 +7,6 @@ def count_gigahorse_commands(file_path):
     return count
 
 
-# 示例用法
 file_path = "1exp.log"
 print(
     f"line count starting with 'gigahorse run command:': {count_gigahorse_commands(file_path)}"
