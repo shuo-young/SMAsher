@@ -8,6 +8,30 @@ import global_params
 
 log = logging.getLogger(__name__)
 
+"""
+0xf04f2707 => receiveFlashLoan(address[],uint256[],uint256[],bytes)
+0x10d1e85c => uniswapV2Call(address,uint256,uint256,bytes)
+0xe9cbafb0 => uniswapV3FlashCallback
+0x84800812 => pancakeCall(address,uint256,uint256,bytes)
+0xa1d48336 => pancakeV3FlashCallback
+0xeb2021c3 => DVMFlashLoanCall(address,uint256,uint256,bytes)
+0x7ed1f1dd => DPPFlashLoanCall
+0x920f5c84 => executeOperation(address[],uint256[],uint256[],address,bytes)
+0x23e30c8b => onFlashLoan(address,address,uint256,uint256,bytes)
+
+"""
+magic_callback = [
+    "0x10d1e85c",
+    "0xf04f2707",
+    "0xe9cbafb0",
+    "0x84800812",
+    "0xa1d48336",
+    "0xeb2021c3",
+    "0x7ed1f1dd",
+    "0x920f5c84",
+    "0x23e30c8b",
+]
+
 
 # Data structure of contracts
 class Contract:
@@ -93,14 +117,16 @@ class Contract:
                 )
             )
             if self.origin is True:
-                if not self.createbin:
-                    # remove key 0x0 from the dict  func_sign_dict
-                    del self.func_sign_dict["0x0"]
+                # if not self.createbin:
+                #     # remove key 0x0 from the dict  func_sign_dict
+                #     del self.func_sign_dict["0x0"]
                 for func in self.func_sign_dict.keys():
-                    log.info(
-                        "set external calls in function " + self.func_sign_dict[func]
-                    )
-                    self.set_external_calls(func, self.func_sign_dict[func])
+                    if self.func_sign_dict[func] in magic_callback:
+                        log.info(
+                            "set external calls in function "
+                            + self.func_sign_dict[func]
+                        )
+                        self.set_external_calls(func, self.func_sign_dict[func])
             else:
                 self.set_external_calls(self.func, self.func_sign)
 
@@ -108,7 +134,7 @@ class Contract:
         if self.platform == "ETH":
             self.url = "https://eth-mainnet.g.alchemy.com/v2/6t0LpEw9cr0OlGIVTFqs92aOIkfhktMk"  # backup: https://eth-mainnet.g.alchemy.com/v2/6t0LpEw9cr0OlGIVTFqs92aOIkfhktMk
         elif self.platform == "BSC":
-            self.url = "https://little-aged-thunder.bsc.quiknode.pro/53b86587d990e1cb9354cd2a01ebb3b16109427f/"
+            self.url = "https://rpc.ankr.com/bsc"
         elif self.platform == "FTM":
             self.url = "https://practical-long-energy.fantom.discover.quiknode.pro/fc97af1ebab40f57ea698b6cf3dd67a2d24cac1a/"
         elif self.platform == "ARB":
@@ -125,24 +151,25 @@ class Contract:
             return
         loc = global_params.CONTRACT_PATH + self.logic_addr + ".hex"
         if os.path.exists(loc):
-            with open(loc, "r") as f:
-                bin = f.read()
-                if bin == "0x":
-                    bin_content = (
-                        global_params.CONTRACT_PATH
-                        + "createbin/"
-                        + self.logic_addr
-                        + "_createbin.hex"
-                    )
-                    with open(bin_content, "r") as bf:
-                        bin = bf.read()
-                    with open(loc, "w") as wf:
-                        wf.write(bin[2:])
-                    self.createbin = True
-                    # self.origin = True
-                    # createbin only has constructor
-                    self.func_sign = "__function_selector__"
-                    self.func_sign_list = ["__function_selector__"]
+            # not analyze creation code
+            # with open(loc, "r") as f:
+            #     bin = f.read()
+            #     if bin == "0x":
+            #         bin_content = (
+            #             global_params.CONTRACT_PATH
+            #             + "createbin/"
+            #             + self.logic_addr
+            #             + "_createbin.hex"
+            #         )
+            #         with open(bin_content, "r") as bf:
+            #             bin = bf.read()
+            #         with open(loc, "w") as wf:
+            #             wf.write(bin[2:])
+            #         self.createbin = True
+            #         # self.origin = True
+            #         # createbin only has constructor
+            #         self.func_sign = "__function_selector__"
+            #         self.func_sign_list = ["__function_selector__"]
             return
         else:
             # switch case for http or wss provider
@@ -165,6 +192,7 @@ class Contract:
             + global_params.CONTRACT_DIR
             + "{contract_addr}.hex >/dev/null 2>&1"
         )
+        print(f"gigahorse run command: {command}")
         os.system(command.format(contract_addr=self.logic_addr))
 
     def set_func(self):
@@ -283,7 +311,7 @@ class Contract:
                 if temp_stmt not in self.knownArgVals.keys():
                     self.knownArgVals[temp_stmt] = {}
                 self.knownArgVals[temp_stmt][temp_index] = temp_callArgVal
-            log.info(self.knownArgVals)
+            log.info("known const args: {}".format(self.knownArgVals))
 
         # big overhead for rpc request
         if global_params.CALLARG_STORAGETYPE:
@@ -540,8 +568,7 @@ class Contract:
             ]
 
         transfer_target_call = self.get_sensitive_transfer_target()
-        log.info("transfer target call")
-        log.info(transfer_target_call)
+        log.info("transfer target call: {}".format(transfer_target_call))
 
         # for every call point in the contract, try to find its call target
         for i in range(len(df_external_call)):

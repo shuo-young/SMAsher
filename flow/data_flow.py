@@ -1,7 +1,6 @@
 import logging
 import os
 
-from flow.token_flow import TokenFlowAnalysis
 import global_params
 import pandas as pd
 
@@ -17,8 +16,40 @@ class FlowAnalysis:
     ):
         self.contracts = contracts
         self.input_contract = input_contract
-        self.token_flow_analysis = TokenFlowAnalysis(input_contract, contracts)
-        self.token_flow_analysis.set_token_flows()
+
+    def is_after(self, contract_addr, func_sign, stmt1, stmt2):
+        loc_external_call = (
+            global_params.OUTPUT_PATH
+            + ".temp/"
+            + contract_addr
+            + "/out/Leslie_ExternalCallInfoSequence.csv"
+        )
+        if os.path.exists(loc_external_call) and (
+            os.path.getsize(loc_external_call) > 0
+        ):
+            df_external_call = pd.read_csv(loc_external_call, header=None, sep="	")
+            df_external_call.columns = [
+                "funcSign",
+                "callStmt",
+            ]
+            df_func = df_external_call[df_external_call["funcSign"] == func_sign]
+
+            if not df_func.empty:
+                # Get the index (line number) of stmt1 and stmt2
+                stmt1_index = df_func.index[df_func["callStmt"] == stmt1].tolist()
+                stmt2_index = df_func.index[df_func["callStmt"] == stmt2].tolist()
+
+                if stmt1_index and stmt2_index:
+                    # Compare their positions
+                    return stmt1_index[0] < stmt2_index[0]
+                else:
+                    # One or both statements not found in the dataframe
+                    return False
+            else:
+                # No entries for the function found in the dataframe
+                return False
+        else:
+            return False
 
     # helper
     def find_executed_pp(self, caller, callsite, contract_addr, func_sign):
@@ -695,17 +726,22 @@ class FlowAnalysis:
                     temp_caller, temp_logic_addr, temp_func_sign = temp_result
                 else:
                     continue
-                next_pps.append(
-                    self.new_pp(
-                        pp["contract_addr"],
-                        callArg["callStmt"],
-                        temp_logic_addr,
-                        temp_func_sign,
-                        callArg["callArgIndex"],
-                        pp["func_sign"],
-                        "call_arg",
+                if (
+                    temp_caller is not None
+                    and temp_logic_addr is not None
+                    and temp_func_sign is not None
+                ):
+                    next_pps.append(
+                        self.new_pp(
+                            pp["contract_addr"],
+                            callArg["callStmt"],
+                            temp_logic_addr,
+                            temp_func_sign,
+                            callArg["callArgIndex"],
+                            pp["func_sign"],
+                            "call_arg",
+                        )
                     )
-                )
                 # log.info(next_pps)
             # the return index of the function call
             indexes = self.spread_funcArg_funcRet(
@@ -723,19 +759,30 @@ class FlowAnalysis:
                         "func_ret",
                     )
                 )
+        # log.info(next_pps)
         return next_pps
 
     def is_reachable(self, pp1, pp2):
         if self.is_same(pp1, pp2):
             return True
+
+        visited = set()
         pending = [pp1]
-        while len(pending) > 0:
+
+        while pending:
             temp_pp = pending.pop()
+            temp_pp_id = (
+                temp_pp["contract_addr"],
+                temp_pp["func_sign"],
+                temp_pp["index"],
+                temp_pp["caller_funcSign"],
+            )
+
+            if temp_pp_id in visited:
+                continue
+            visited.add(temp_pp_id)
+
             for pp in self.transfer(temp_pp):
                 if self.is_same(pp, pp2):
-                    # log.info(pp)
-                    # log.info(pp2)
                     return True
-                else:
-                    pending.append(pp)
-        return False
+                pending.append(pp)

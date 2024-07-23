@@ -22,10 +22,11 @@ class AttackIdentifier:
         self.intra_callsigs = []
         self.sensitive_callsigs = []
         self.attack_matrix = {
-            "br": False,
-            "dos": False,
-            "reentrancy": False,
-            "price_manipulation": False,
+            "sm": False,
+            "intra": False,
+            "intra_info": [],
+            "inter": False,
+            "inter_info": [],
         }
         self.visited_contracts = visited_contracts
         self.visited_funcs = visited_funcs
@@ -61,15 +62,32 @@ class AttackIdentifier:
 
         reachable = False
 
+        intra_analysis = False
+        intra_info = []
+        inter_analysis = False
+        inter_info = []
+
         tainted_pps = []
         source_taint_trace = []
 
+        visited = set()
         # for the source to taint
         for pp1 in pps_near_source:
             pending = [pp1]
             log.info("analyzing tainted source: {}".format(pp1))
             while len(pending) > 0:
                 temp_pp = pending.pop()
+                # Create a unique identifier for the dictionary
+                temp_pp_id = (
+                    temp_pp["contract_addr"],
+                    temp_pp["func_sign"],
+                    temp_pp["index"],
+                )
+
+                if temp_pp_id in visited:
+                    continue  # Skip already visited program points
+                visited.add(temp_pp_id)
+
                 next_pps = self.flow_analysis.transfer(temp_pp)
                 if len(next_pps) > 0:
                     for pp in next_pps:
@@ -85,8 +103,11 @@ class AttackIdentifier:
                                     trace
                                 )
                             )
-                        pending.append(pp)
-                else:  # = current pp has no transfer
+                        # Create a unique identifier for the dictionary
+                        pp_id = (pp["contract_addr"], pp["func_sign"], pp["index"])
+                        if pp_id not in visited:
+                            pending.append(pp)
+                else:  # current pp has no transfer node
                     tainted_slot = self.flow_analysis.spread_funcArg_taintedVar(
                         temp_pp["contract_addr"], temp_pp["func_sign"], temp_pp["index"]
                     )
@@ -105,10 +126,22 @@ class AttackIdentifier:
 
         # from the source to sink
         # for every source, find whether one sink can be reached
+        if not pps_near_source:
+            log.warning("pps_near_source is empty")
+        if not pps_near_sink:
+            log.warning("pps_near_sink is empty")
+        log.info("pps_near_source: {}".format(pps_near_source))
+        log.info("pps_near_sink: {}".format(pps_near_sink))
         log.info("begin to analyze the source flow to sink")
+        # for every source, find whether one sink (the afterward callStmt) can be reached
         for pp1 in pps_near_source:
-            # log.info("analyzing source: {}".format(pp1))
+            log.info(
+                "analyzing source: {}, the call stmt is: {}".format(
+                    pp1, pp1["callsite"]
+                )
+            )
             for pp2 in pps_near_sink:
+                # log.info("Comparing pp1: {} with pp2: {}".format(pp1, pp2))
                 if self.flow_analysis.is_same(pp1, pp2):
                     log.info("found same pp {}, {}".format(pp1, pp2))
                     involved_states = (
@@ -122,7 +155,20 @@ class AttackIdentifier:
                         )
                     )
                     for trace in source_taint_trace:
-                        if trace[1]["contract_addr"] == pp2["caller"]:
+                        # judge the source=>taint and source=>sink trace
+                        is_after = self.flow_analysis.is_after(
+                            pp1["caller"],
+                            pp1["caller_funcSign"],
+                            trace[0]["callsite"],
+                            pp1["callsite"],
+                        )
+                        if is_after:
+                            log.info(
+                                "the source to sink call {} is after the source to taint call {}".format(
+                                    pp1["callsite"], trace[0]["callsite"]
+                                )
+                            )
+                        if trace[1]["contract_addr"] == pp2["caller"] and is_after:
                             bool = list(
                                 set(involved_states).intersection(set(trace[2]))
                             )
@@ -135,6 +181,8 @@ class AttackIdentifier:
                                 log.info(
                                     "intra state manipulation in the same contract"
                                 )
+                                intra_analysis = True
+                                intra_info.append([trace, pp2, bool])
 
                 elif self.flow_analysis.is_reachable(pp1, pp2):
                     log.info("found reachable pp {}, {}".format(pp1, pp2))
@@ -150,7 +198,19 @@ class AttackIdentifier:
                     )
                     # intra analysis
                     for trace in source_taint_trace:
-                        if trace[1]["contract_addr"] == pp2["caller"]:
+                        is_after = self.flow_analysis.is_after(
+                            pp1["caller"],
+                            pp1["caller_funcSign"],
+                            trace[0]["callsite"],
+                            pp1["callsite"],
+                        )
+                        if is_after:
+                            log.info(
+                                "the source to sink call {} is after the source to taint call {}".format(
+                                    pp1["callsite"], trace[0]["callsite"]
+                                )
+                            )
+                        if trace[1]["contract_addr"] == pp2["caller"] and is_after:
                             bool = list(
                                 set(involved_states).intersection(set(trace[2]))
                             )
@@ -163,13 +223,18 @@ class AttackIdentifier:
                                 log.info(
                                     "intra state manipulation in the same contract"
                                 )
+                                intra_analysis = True
+                                intra_info.append([trace, pp2, bool])
                     # then we should check the whether the states are influenced by the source=>taint flow
                     # inter analysis
                     log.info("begin inter procedure analysis")
                     # source: influenced state by source
                     # sink: the ret2sink site of the sink contract
                     # set the sink as the transfer amount
-                    pp2["index"] = 1  # magically for test
+                    if pp2["func_sign"] == "0xa9059cbb":
+                        pp2["index"] = (
+                            1  # magically for test of standard transfer function
+                        )
                     for trace in source_taint_trace:
                         contract_to_analysis = trace[1]
                         log.info(
@@ -188,39 +253,95 @@ class AttackIdentifier:
                         for source in sources:
                             # log.info("analyzing source: {}".format(source))
                             if self.flow_analysis.is_same(source, pp2):
-                                reachable = True
-                                log.info(
-                                    "tainted states flow to sink from source: {}".format(
-                                        source
-                                    )
+                                is_after = self.flow_analysis.is_after(
+                                    pp1["caller"],
+                                    pp1["caller_funcSign"],
+                                    trace[0]["callsite"],
+                                    pp1["callsite"],
                                 )
-                                log.info(
-                                    "can be affected by state at slot {} of contract {} at the return of function {}".format(
-                                        slot[1][source["func_sign"]],
-                                        slot[0],
-                                        source["func_sign"],
+                                if is_after:
+                                    log.info(
+                                        "the source to sink call {} is after the source to taint call {}".format(
+                                            pp1["callsite"], trace[0]["callsite"]
+                                        )
                                     )
-                                )
+                                    reachable = True
+                                    log.info(
+                                        "tainted states flow to sink from source: {}".format(
+                                            source
+                                        )
+                                    )
+                                    log.critical(
+                                        "can be affected by state at slot {} of contract {} at the return of function {}".format(
+                                            slot[1][source["func_sign"]],
+                                            slot[0],
+                                            source["func_sign"],
+                                        )
+                                    )
+                                    inter_analysis = True
+                                    inter_info.append(
+                                        [
+                                            trace,
+                                            pp2,
+                                            source,
+                                            (
+                                                slot[1][source["func_sign"]],
+                                                slot[0],
+                                                source["func_sign"],
+                                            ),
+                                        ]
+                                    )
                             elif self.flow_analysis.is_reachable(source, pp2):
-                                reachable = True
-                                log.info(
-                                    "tainted states flow to sink from source: {}".format(
-                                        source
-                                    )
+                                is_after = self.flow_analysis.is_after(
+                                    pp1["caller"],
+                                    pp1["caller_funcSign"],
+                                    trace[0]["callsite"],
+                                    pp1["callsite"],
                                 )
-                                log.critical(
-                                    "can be affected by state at slot {} of contract {} at the return of function {}".format(
-                                        slot[1][source["func_sign"]],
-                                        slot[0],
-                                        source["func_sign"],
+                                if is_after:
+                                    log.info(
+                                        "the source to sink call {} is after the source to taint call {}".format(
+                                            pp1["callsite"], trace[0]["callsite"]
+                                        )
                                     )
-                                )
+                                    reachable = True
+                                    log.info(
+                                        "tainted states flow to sink from source: {}".format(
+                                            source
+                                        )
+                                    )
+                                    log.critical(
+                                        "can be affected by state at slot {} of contract {} at the return of function {}".format(
+                                            slot[1][source["func_sign"]],
+                                            slot[0],
+                                            source["func_sign"],
+                                        )
+                                    )
+                                    inter_analysis = True
+                                    inter_info.append(
+                                        [
+                                            trace,
+                                            pp2,
+                                            source,
+                                            (
+                                                slot[1][source["func_sign"]],
+                                                slot[0],
+                                                source["func_sign"],
+                                            ),
+                                        ]
+                                    )
 
         if reachable:
             # print("reachable")
             log.info("reachable")
+            self.attack_matrix["is_attack"] = True
             # print(result)
             # print(self.attack_matrix)
+            self.attack_matrix["sm"] = True
+            self.attack_matrix["intra"] = intra_analysis
+            self.attack_matrix["inter"] = inter_analysis
+            self.attack_matrix["intra_info"] = intra_info
+            self.attack_matrix["inter_info"] = inter_info
         return result, self.attack_matrix
 
     def get_reen_info(self):

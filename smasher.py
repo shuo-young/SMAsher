@@ -1,12 +1,43 @@
 import argparse
 import json
 import logging
+import os
+import shutil
 import time
+
+import numpy as np
 
 import global_params
 from contract import Contract
 from graph.call_graph import CallGraph
 from identifier import AttackIdentifier
+
+magic_callback = [
+    "0x10d1e85c",
+    "0xf04f2707",
+    "0xe9cbafb0",
+    "0x84800812",
+    "0xa1d48336",
+    "0xeb2021c3",
+    "0x7ed1f1dd",
+    "0x920f5c84",
+    "0x23e30c8b",
+]
+
+
+def convert_types(obj):
+    if isinstance(obj, np.int64):
+        return int(obj)
+    elif isinstance(obj, np.float64):
+        return float(obj)
+    elif isinstance(obj, list):
+        return [convert_types(item) for item in obj]
+    elif isinstance(obj, tuple):
+        return tuple(convert_types(item) for item in obj)
+    elif isinstance(obj, dict):
+        return {key: convert_types(value) for key, value in obj.items()}
+    return obj
+
 
 if __name__ == "__main__":
     # Main Body
@@ -58,9 +89,18 @@ if __name__ == "__main__":
     parser.add_argument(
         "-v", "--verbose", help="Verbose output, print everything.", action="store_true"
     )
+    parser.add_argument(
+        "-d",
+        "--directory",
+        help="contract directory.",
+        action="store",
+        dest="contract_dir",
+        type=str,
+        default="",
+    )
     args = parser.parse_args()
 
-    file_handler = logging.FileHandler("{}.log".format(args.logic_addr), mode="w")
+    file_handler = logging.FileHandler("logs/{}.log".format(args.logic_addr), mode="w")
     file_handler.setLevel(logging.INFO if args.verbose else logging.WARNING)
     formatter = logging.Formatter(
         fmt="[%(levelname)s][%(filename)s:%(lineno)d]: %(message)s",
@@ -83,6 +123,14 @@ if __name__ == "__main__":
         storage_addr = args.logic_addr
     else:
         storage_addr = args.storage_addr
+    if args.contract_dir != "":
+        # global_params.CONTRACT_PATH = "../get_x_code/output/" + args.contract_dir + "/"
+        global_params.CONTRACT_PATH = "./contracts/" + args.contract_dir + "/"
+        print(f"Contract path: {global_params.CONTRACT_PATH}")
+        # global_params.CONTRACT_DIR = (
+        #     "../../get_x_code/output/" + args.contract_dir + "/"
+        # )
+        global_params.CONTRACT_DIR = "../contracts/" + args.contract_dir + "/"
     log.info("testing function signature {}...".format(args.func_sign))
     source = {
         "platform": args.platform,
@@ -111,7 +159,54 @@ if __name__ == "__main__":
         source["level"],
         source["callArgVals"],
     )
+    result = {
+        "is_attack": False,
+        "warning": "medium",
+        "attack_matrix": {},
+        "analysis_loc": "",
+        "platform": args.platform,
+        "block_number": args.block_number,
+        "time": None,
+        "semantic_features": {
+            "op_creation": {
+                "op_multicreate": False,
+                "op_solecreate": False,
+            },
+            "op_selfdestruct": False,
+            "op_env": False,
+        },
+        "external_call": {
+            "externalcall_inhook": False,
+            "externalcall_infallback": False,
+        },
+        "call_paths": [],
+        "visited_contracts": [],
+        "visited_contracts_num": 0,
+        "visited_funcs": [],
+        "visited_funcs_num": 0,
+        "max_call_depth": 0,
+    }
+
     func_sign_list = original_contract.get_func_sign_list()
+    if len(list(set(func_sign_list).intersection(set(magic_callback)))) == 0:
+        log.info("no flashloan callback implemented!")
+        end = time.perf_counter()
+
+        res = {}
+        res[args.logic_addr] = result
+        result["time"] = end - begin
+
+        print(res)
+
+        store_path = global_params.JSON_PATH + args.logic_addr + ".json"
+        # uncomment if not need to rewrite
+        # if not os.path.exists(store_path):
+        with open(store_path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(res, indent=2, ensure_ascii=False))
+        if os.path.exists(global_params.TEMP_WORKING_DIR + args.logic_addr):
+            shutil.rmtree(global_params.TEMP_WORKING_DIR + args.logic_addr)
+        exit(0)
+
     if args.func_sign == "":
         external_call_in_func_sigature = (
             original_contract.get_external_call_in_func_sigature()
@@ -202,33 +297,6 @@ if __name__ == "__main__":
         visited_contracts,
         visited_funcs,
     )
-    result = {
-        "is_attack": False,
-        "warning": "medium",
-        "attack_matrix": {},
-        "analysis_loc": "",
-        "platform": args.platform,
-        "block_number": args.block_number,
-        "time": None,
-        "semantic_features": {
-            "op_creation": {
-                "op_multicreate": False,
-                "op_solecreate": False,
-            },
-            "op_selfdestruct": False,
-            "op_env": False,
-        },
-        "external_call": {
-            "externalcall_inhook": False,
-            "externalcall_infallback": False,
-        },
-        "call_paths": [],
-        "visited_contracts": [],
-        "visited_contracts_num": 0,
-        "visited_funcs": [],
-        "visited_funcs_num": 0,
-        "max_call_depth": 0,
-    }
 
     result["is_attack"], result["attack_matrix"] = detector.detect()
     result["call_paths"] = call_paths
@@ -257,7 +325,6 @@ if __name__ == "__main__":
         "externalcall_infallback"
     ] = detector.semantic_analysis.externalcall_infallback()
 
-    res = {}
     if is_createbin:
         result["analysis_loc"] = "createbin"
     else:
@@ -274,10 +341,11 @@ if __name__ == "__main__":
     store_path = global_params.JSON_PATH + args.logic_addr + ".json"
     # uncomment if not need to rewrite
     # if not os.path.exists(store_path):
+    converted_data = convert_types(res)
     with open(store_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(res, indent=2, ensure_ascii=False))
+        f.write(json.dumps(converted_data, indent=2, ensure_ascii=False))
 
     # uncomment if need remove temp files
     # for contract in list(set(visited_contracts)):
-    #     if os.path.exists(TEMP_WORKING_DIR + contract):
-    #         shutil.rmtree(TEMP_WORKING_DIR + contract)
+    #     if os.path.exists(global_params.TEMP_WORKING_DIR + contract):
+    #         shutil.rmtree(global_params.TEMP_WORKING_DIR + contract)

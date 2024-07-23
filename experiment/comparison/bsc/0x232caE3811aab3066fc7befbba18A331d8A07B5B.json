@@ -1,0 +1,111 @@
+{
+  "0x232caE3811aab3066fc7befbba18A331d8A07B5B": {
+    "is_attack": false,
+    "warning": "high",
+    "attack_matrix": {
+      "br": false,
+      "dos": false,
+      "reentrancy": false
+    },
+    "analysis_loc": "runtimebin",
+    "platform": "ETH",
+    "block_number": 3810000,
+    "time": 26.624538753181696,
+    "semantic_features": {
+      "op_creation": {
+        "op_multicreate": false,
+        "op_solecreate": false
+      },
+      "op_selfdestruct": false,
+      "op_env": true
+    },
+    "external_call": {
+      "externalcall_inhook": false,
+      "externalcall_infallback": false,
+      "hooks_focused": [
+        "tokensReceived",
+        "transferFrom",
+        "tokensToSend",
+        "onERC721Received",
+        "onERC1155Received",
+        "canImplementInterfaceForAddress",
+        "delegatedTransferERC20",
+        "onTokenTransfer",
+        "onFlashLoan",
+        "uniswapV2Call"
+      ]
+    },
+    "call_paths": [
+      "msg.sender_ -> 0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x9a592f60\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x9a592f60 -> 0x10ed43c718714eb63d5aa57b78b54704e256024e_0xd06ca61f\n",
+      "msg.sender_ -> 0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x93bbea7f\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x93bbea7f -> 0x5ff2b0db69458a0750badebc4f9e13add608c7f_0xd06ca61f\n          0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xd06ca61f -> 0x0000000000000000000000000000000000000000_0xd06ca61f\n",
+      "msg.sender_ -> 0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xcf6c62ea\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xcf6c62ea -> 0x5ff2b0db69458a0750badebc4f9e13add608c7f_0xe8e33700\n          0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe8e33700 -> 0x0000000000000000000000000000000000000000_0xe8e33700\n",
+      "msg.sender_ -> 0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0xa9059cbb\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x55d398326f99059ff775485246999027b3197955_0xa9059cbb\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0xf952fc3ca7325cc27d15885d37117676d25bfda6_0x70a08231\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x4c65db7233a85a9eaf4131508bc27ec81ba2c701_0xd389800f\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0xa07fcb5edf05ea16e681ca7019e696c7dad2ee4a_0x8dbdbe6d\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x19e7cbecdd23a16dfa5573df54d98f7caae03019_0x70a08231\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x19e7cbecdd23a16dfa5573df54d98f7caae03019_0x95ea7b3\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0xf952fc3ca7325cc27d15885d37117676d25bfda6_0x70a08231\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0x70a08231\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x55d398326f99059ff775485246999027b3197955_0x70a08231\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x5ff2b0db69458a0750badebc4f9e13add608c7f_0xd06ca61f\n          0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xd06ca61f -> 0x0000000000000000000000000000000000000000_0xd06ca61f\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x5ff2b0db69458a0750badebc4f9e13add608c7f_0xe8e33700\n          0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe8e33700 -> 0x0000000000000000000000000000000000000000_0xe8e33700\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x5ff2b0db69458a0750badebc4f9e13add608c7f_0xbaa2abde\n          0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xbaa2abde -> 0x0000000000000000000000000000000000000000_0xbaa2abde\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x19e7cbecdd23a16dfa5573df54d98f7caae03019_0x95ea7b3\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xa1d48336 -> 0x19e7cbecdd23a16dfa5573df54d98f7caae03019_0x70a08231\n",
+      "msg.sender_ -> 0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x9cf38f7c\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x9cf38f7c -> 0x5ff2b0db69458a0750badebc4f9e13add608c7f_0xbaa2abde\n          0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xbaa2abde -> 0x0000000000000000000000000000000000000000_0xbaa2abde\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x9cf38f7c -> 0x19e7cbecdd23a16dfa5573df54d98f7caae03019_0x95ea7b3\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0x9cf38f7c -> 0x19e7cbecdd23a16dfa5573df54d98f7caae03019_0x70a08231\n",
+      "msg.sender_ -> 0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe4d8479c\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe4d8479c -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0xa9059cbb\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe4d8479c -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0x70a08231\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe4d8479c -> 0x4f3126d5de26413abdcf6948943fb9d0847d9818_0x490e6cbc\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe4d8479c -> 0xf952fc3ca7325cc27d15885d37117676d25bfda6_0x23b872dd\n     0x232caE3811aab3066fc7befbba18A331d8A07B5B_0xe4d8479c -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0x23b872dd\n"
+    ],
+    "visited_contracts": [
+      "0x232caE3811aab3066fc7befbba18A331d8A07B5B",
+      "0x19e7cbecdd23a16dfa5573df54d98f7caae03019",
+      "0x0000000000000000000000000000000000000000",
+      "0xf952fc3ca7325cc27d15885d37117676d25bfda6",
+      "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "0x5ff2b0db69458a0750badebc4f9e13add608c7f",
+      "0x4f3126d5de26413abdcf6948943fb9d0847d9818",
+      "0x55d398326f99059ff775485246999027b3197955",
+      "0x4c65db7233a85a9eaf4131508bc27ec81ba2c701",
+      "0x10ed43c718714eb63d5aa57b78b54704e256024e",
+      "0xa07fcb5edf05ea16e681ca7019e696c7dad2ee4a"
+    ],
+    "visited_contracts_num": 11,
+    "visited_funcs": [
+      "0x9a592f60",
+      "0xe4d8479c",
+      "0xe8e33700",
+      "0xd389800f",
+      "0x23b872dd",
+      "0x93bbea7f",
+      "0x9cf38f7c",
+      "0x490e6cbc",
+      "0x8dbdbe6d",
+      "0x95ea7b3",
+      "0xd06ca61f",
+      "0xa1d48336",
+      "0xcf6c62ea",
+      "0xa9059cbb",
+      "0x70a08231",
+      "0xbaa2abde"
+    ],
+    "visited_funcs_num": 16,
+    "max_call_depth": 2,
+    "contract_funcsigs": [
+      "0x00000000",
+      "__function_selector__",
+      "0xe4d8479c",
+      "0x9cf38f7c",
+      "0xa1d48336",
+      "0xcf6c62ea",
+      "0x84800812",
+      "0x93bbea7f",
+      "0x9a592f60"
+    ],
+    "contract_funcsigs_external_call": [
+      "__function_selector__",
+      "0xe4d8479c",
+      "0x9cf38f7c",
+      "0xa1d48336",
+      "0xcf6c62ea",
+      "0x93bbea7f",
+      "0x9a592f60"
+    ],
+    "sensitive_callsigs": [
+      "0x95ea7b3",
+      "0x22c0d9f",
+      "0xa9059cbb"
+    ],
+    "overlap": {
+      "has_overlap": false,
+      "overlap_external_call": []
+    },
+    "reentrancy_path_info": {}
+  }
+}

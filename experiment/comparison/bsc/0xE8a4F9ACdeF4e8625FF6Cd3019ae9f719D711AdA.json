@@ -1,0 +1,93 @@
+{
+  "0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA": {
+    "is_attack": false,
+    "warning": "high",
+    "attack_matrix": {
+      "br": false,
+      "dos": false,
+      "reentrancy": false
+    },
+    "analysis_loc": "runtimebin",
+    "platform": "ETH",
+    "block_number": 3810000,
+    "time": 16.591237757354975,
+    "semantic_features": {
+      "op_creation": {
+        "op_multicreate": false,
+        "op_solecreate": false
+      },
+      "op_selfdestruct": false,
+      "op_env": true
+    },
+    "external_call": {
+      "externalcall_inhook": false,
+      "externalcall_infallback": false,
+      "hooks_focused": [
+        "tokensReceived",
+        "transferFrom",
+        "tokensToSend",
+        "onERC721Received",
+        "onERC1155Received",
+        "canImplementInterfaceForAddress",
+        "delegatedTransferERC20",
+        "onTokenTransfer",
+        "onFlashLoan",
+        "uniswapV2Call"
+      ]
+    },
+    "call_paths": [
+      "msg.sender_ -> 0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x93bbea7f\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x93bbea7f -> 0x10ed43c718714eb63d5aa57b78b54704e256024e_0xd06ca61f\n",
+      "msg.sender_ -> 0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x46da99a0\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x46da99a0 -> 0x10ed43c718714eb63d5aa57b78b54704e256024e_0x38ed1739\n",
+      "msg.sender_ -> 0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x7ed1f1dd\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x7ed1f1dd -> 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_0x70a08231\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x7ed1f1dd -> 0x79b2bc95344efe31cb6a7b0cf8a843a5ee125dff_0x70a08231\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x7ed1f1dd -> 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_0x70a08231\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x7ed1f1dd -> 0x10ed43c718714eb63d5aa57b78b54704e256024e_0xd06ca61f\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0x7ed1f1dd -> 0x10ed43c718714eb63d5aa57b78b54704e256024e_0x38ed1739\n",
+      "msg.sender_ -> 0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0xc44d706b\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0xc44d706b -> 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_0xa9059cbb\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0xc44d706b -> 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_0x70a08231\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0xc44d706b -> 0xfeafe253802b77456b4627f8c2306a9cebb5d681_0xd0a494e4\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0xc44d706b -> 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_0x70a08231\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0xc44d706b -> 0x79b2bc95344efe31cb6a7b0cf8a843a5ee125dff_0x23b872dd\n     0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA_0xc44d706b -> 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_0x23b872dd\n"
+    ],
+    "visited_contracts": [
+      "0xfeafe253802b77456b4627f8c2306a9cebb5d681",
+      "0xE8a4F9ACdeF4e8625FF6Cd3019ae9f719D711AdA",
+      "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "0x10ed43c718714eb63d5aa57b78b54704e256024e",
+      "0x79b2bc95344efe31cb6a7b0cf8a843a5ee125dff"
+    ],
+    "visited_contracts_num": 5,
+    "visited_funcs": [
+      "0x23b872dd",
+      "0xa9059cbb",
+      "0x70a08231",
+      "0x46da99a0",
+      "0x7ed1f1dd",
+      "0x93bbea7f",
+      "0x38ed1739",
+      "0xc44d706b",
+      "0xd06ca61f",
+      "0xd0a494e4"
+    ],
+    "visited_funcs_num": 10,
+    "max_call_depth": 1,
+    "contract_funcsigs": [
+      "0x00000000",
+      "__function_selector__",
+      "0xc44d706b",
+      "0x7ed1f1dd",
+      "0x46da99a0",
+      "0x84800812",
+      "0x93bbea7f"
+    ],
+    "contract_funcsigs_external_call": [
+      "__function_selector__",
+      "0xc44d706b",
+      "0x7ed1f1dd",
+      "0x46da99a0",
+      "0x93bbea7f"
+    ],
+    "sensitive_callsigs": [
+      "0xa9059cbb",
+      "0x95ea7b3",
+      "0x22c0d9f"
+    ],
+    "overlap": {
+      "has_overlap": false,
+      "overlap_external_call": []
+    },
+    "reentrancy_path_info": {}
+  }
+}

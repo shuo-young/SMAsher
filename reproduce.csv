@@ -1,3 +1,0 @@
-DApp,Address,Platform,Snapshot,AttackFunction,CallBackFunction,Command
-Yield,0xd775fd7b76424a553e4adce6c2f99be419ce8d41,ARB,206219812,0x9e5faafc,0xf04f2707,python3 smasher.py -la 0xd775fd7b76424a553e4adce6c2f99be419ce8d41 -bn 206219812 -bp ARB -fs 0xf04f2707
-HedgeyFinance,0xc793113f1548b97e37c409f39244ee44241bf2b3,ETH,19687887,0xc9a69562,0xf04f2707,python3 smasher.py -la 0xc793113f1548b97e37c409f39244ee44241bf2b3 -bn 19687887 -bp ETH -fs 0xf04f2707

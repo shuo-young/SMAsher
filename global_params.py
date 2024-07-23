@@ -1,6 +1,7 @@
 OUTPUT_PATH = "./gigahorse-toolchain/"
 
-JSON_PATH = "./output/"
+# JSON_PATH = "./output/"
+JSON_PATH = "./output_bsc/"
 
 CONTRACT_PATH = "./gigahorse-toolchain/contracts/"
 

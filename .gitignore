@@ -12,6 +12,12 @@ __pycache__
 
 .DS_Store
 
-output/
-
 gigahorse-toolchain/contracts
+contracts
+
+logs/
+output/
+output_bsc/
+06_pre-exp-test/
+
+res/

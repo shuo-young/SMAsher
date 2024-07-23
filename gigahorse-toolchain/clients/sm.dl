@@ -184,6 +184,31 @@ Leslie_ExternalCallInfo(func, callStmt, callOp, calleeVar, numArg, numRet) :-
   ExternalCall_NumOfArgs(callStmt, numArg),
   numRet = count: ExternalCall_ActualReturn(callStmt, _, _).
 
+// mark sequence
+.decl Leslie_ExternalCallInfoSequence(funcSign:symbol, callStmt:Statement)
+.output Leslie_ExternalCallInfoSequence
+Leslie_ExternalCallInfoSequence(funcSign, callStmt) :-
+  Leslie_FunctionSelector(func, funcSign),
+  Leslie_Statement_Function(callStmt, func),
+  (CALL(callStmt, _, _, _, _, _, _, _, _);STATICCALL(callStmt, _, _, _, _, _, _, _);DELEGATECALL(callStmt, _, _, _, _, _, _, _)).
+
+.decl Leslie_CallTrack(from: Statement, to: Statement)
+.output Leslie_CallTrack
+Leslie_CallTrack(from, to) :-
+  Statement_Next(from, to).
+
+Leslie_CallTrack(start, end) :-
+  Statement_Next(start, i),
+  Leslie_CallTrack(i, end).
+
+// external call sequence
+.decl Leslie_ExternalCallSequence(callStmt1:Statement, callStmt2:Statement)
+.output Leslie_ExternalCallSequence
+Leslie_ExternalCallSequence(callStmt1, callStmt2) :-
+  Leslie_CallTrack(callStmt1, callStmt2),
+  Leslie_ExternalCallInfo(_, callStmt1, _, _, _, _),
+  Leslie_ExternalCallInfo(_, callStmt2, _, _, _, _).
+
 // !Know Args
 .decl Leslie_ExternalCall_Known_Arg(func:Function, callStmt:Statement, argIndex:number, argVal:Value)
 .output Leslie_ExternalCall_Known_Arg
