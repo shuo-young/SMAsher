@@ -8,8 +8,8 @@ Artifact repository of the work _SMAsher: Identify the State Manipulation Attack
 
 #### Dataset
 
-1. ETH contract bytecode: download from xblock https://xblock.pro/xblock-eth.html, from block 15,000,000 to 19,250,000.
-2. BSC contract bytecode: obtaining from rpc node from 30,000,000 to 38,100,000. We publicize the dataset to https://userscloud.com/ti8uted8yc4j for public access.
+1. ETH contract bytecode: download from xblock [https://xblock.pro/xblock-eth.html](https://xblock.pro/xblock-eth.html), from block 15,000,000 to 19,250,000.
+2. BSC contract bytecode: obtaining from rpc node from 30,000,000 to 38,100,000. We publicize the dataset to [https://userscloud.com/ti8uted8yc4j](https://userscloud.com/ti8uted8yc4j) for public access.
 
 #### Tool
 
