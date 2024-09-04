@@ -1,6 +1,6 @@
 import logging
 from semantic import semantic_feature
-from flow import data_flow, token_flow
+from flow import data_flow
 
 log = logging.getLogger(__name__)
 
