@@ -1,0 +1,96 @@
+{
+  "0xA47b9f87173edA364c821234158dDA47B03AC217": {
+    "is_attack": false,
+    "warning": "medium",
+    "attack_matrix": {
+      "br": false,
+      "dos": false,
+      "reentrancy": false
+    },
+    "analysis_loc": "runtimebin",
+    "platform": "ETH",
+    "block_number": 3810000,
+    "time": 29.053260248154402,
+    "semantic_features": {
+      "op_creation": {
+        "op_multicreate": false,
+        "op_solecreate": false
+      },
+      "op_selfdestruct": false,
+      "op_env": false
+    },
+    "external_call": {
+      "externalcall_inhook": false,
+      "externalcall_infallback": false,
+      "hooks_focused": [
+        "tokensReceived",
+        "transferFrom",
+        "tokensToSend",
+        "onERC721Received",
+        "onERC1155Received",
+        "canImplementInterfaceForAddress",
+        "delegatedTransferERC20",
+        "onTokenTransfer",
+        "onFlashLoan",
+        "uniswapV2Call"
+      ]
+    },
+    "call_paths": [
+      "msg.sender_ -> 0xA47b9f87173edA364c821234158dDA47B03AC217_0xb20e7344\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xb20e7344 -> 0x369482c78bad380a036cab827fe677c1903d1523_0x490e6cbc\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xb20e7344 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0x902f1ac\n",
+      "msg.sender_ -> 0xA47b9f87173edA364c821234158dDA47B03AC217_0x7b6e840a\n",
+      "msg.sender_ -> 0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0x89afcb44\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x93790c641d029d1cbd779d87b88f67704b6a8f4c_0x852a12e3\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xfc518333f4bc56185bdd971a911fce03dee4fc8c_0xc2998238\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xfc518333f4bc56185bdd971a911fce03dee4fc8c_0xc2998238\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x93790c641d029d1cbd779d87b88f67704b6a8f4c_0xa6afed95\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe09fabb73bd3ade0a17ecc321fd13a19e81ce82_0xa9059cbb\n          0xA47b9f87173edA364c821234158dDA47B03AC217_0xa9059cbb -> 0x0000000000000000000000000000000000000000_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe09fabb73bd3ade0a17ecc321fd13a19e81ce82_0x70a08231\n          0xA47b9f87173edA364c821234158dDA47B03AC217_0x70a08231 -> 0x0000000000000000000000000000000000000000_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xf45cd219aef8618a92baa7ad848364a158a24f33_0x6a627842\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d_0x70a08231\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0xe9e7cea3dedca5984780bafc599bd69add087d56_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c_0xa9059cbb\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x1b81d678ffb9c0263b24a97847620c99d213eb14_0xf28c0498\n     0xA47b9f87173edA364c821234158dDA47B03AC217_0xa1d48336 -> 0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c_0x70a08231\n"
+    ],
+    "visited_contracts": [
+      "0xfc518333f4bc56185bdd971a911fce03dee4fc8c",
+      "0xf45cd219aef8618a92baa7ad848364a158a24f33",
+      "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+      "0x1b81d678ffb9c0263b24a97847620c99d213eb14",
+      "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "0xe09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+      "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
+      "0x93790c641d029d1cbd779d87b88f67704b6a8f4c",
+      "0x369482c78bad380a036cab827fe677c1903d1523",
+      "0xA47b9f87173edA364c821234158dDA47B03AC217",
+      "0x0000000000000000000000000000000000000000"
+    ],
+    "visited_contracts_num": 11,
+    "visited_funcs": [
+      "0xa6afed95",
+      "0xa1d48336",
+      "0x490e6cbc",
+      "0x7b6e840a",
+      "0x6a627842",
+      "0xc2998238",
+      "0xb20e7344",
+      "0x89afcb44",
+      "0x852a12e3",
+      "0x70a08231",
+      "0x902f1ac",
+      "0xa9059cbb",
+      "0xf28c0498"
+    ],
+    "visited_funcs_num": 13,
+    "max_call_depth": 2,
+    "contract_funcsigs": [
+      "0x00000000",
+      "__function_selector__",
+      "0xa1d48336",
+      "0x7b6e840a",
+      "0xb20e7344"
+    ],
+    "contract_funcsigs_external_call": [
+      "__function_selector__",
+      "0xa1d48336",
+      "0x7b6e840a",
+      "0xb20e7344"
+    ],
+    "sensitive_callsigs": [
+      "0x00000000"
+    ],
+    "overlap": {
+      "has_overlap": false,
+      "overlap_external_call": []
+    },
+    "reentrancy_path_info": {}
+  }
+}

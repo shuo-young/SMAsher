@@ -28,7 +28,7 @@ All experimental results are provided in directory [experiment](experiment). We 
 
 -   bsc_exp: detection results of SMAsher on analyzing 583,089 contract bytecode on BSC.
 -   eth_exp: detection results of SMAsher on analyzing 797,482 contract bytecode on ETH.
--   comparison: call path recovery capability comparison with BlockWatchdog, containing its outputs.
+-   comparison: call path recovery capability comparison with BlockWatchdog, SmartCat, LookAhead, containing their outputs.
 -   dataprocess: scripts for analyzing the detection results, specifically, [bsc_exp.csv](experiment/dataprocess/bsc_exp.csv) and [eth_exp.csv](experiment/dataprocess/eth_exp.csv) label every identified contract with their attributes including:
     -   address
     -   creator

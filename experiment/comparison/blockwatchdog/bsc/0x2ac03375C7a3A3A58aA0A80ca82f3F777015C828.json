@@ -1,0 +1,85 @@
+{
+  "0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828": {
+    "is_attack": false,
+    "warning": "medium",
+    "attack_matrix": {
+      "br": false,
+      "dos": false,
+      "reentrancy": false
+    },
+    "analysis_loc": "runtimebin",
+    "platform": "ETH",
+    "block_number": 3810000,
+    "time": 14.286997146904469,
+    "semantic_features": {
+      "op_creation": {
+        "op_multicreate": false,
+        "op_solecreate": false
+      },
+      "op_selfdestruct": false,
+      "op_env": false
+    },
+    "external_call": {
+      "externalcall_inhook": false,
+      "externalcall_infallback": false,
+      "hooks_focused": [
+        "tokensReceived",
+        "transferFrom",
+        "tokensToSend",
+        "onERC721Received",
+        "onERC1155Received",
+        "canImplementInterfaceForAddress",
+        "delegatedTransferERC20",
+        "onTokenTransfer",
+        "onFlashLoan",
+        "uniswapV2Call"
+      ]
+    },
+    "call_paths": [
+      "msg.sender_ -> 0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0xabe7f1ab\n",
+      "msg.sender_ -> 0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x16eebd1e\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x16eebd1e -> 0xfeafe253802b77456b4627f8c2306a9cebb5d681_0xd0a494e4\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x16eebd1e -> 0x55d398326f99059ff775485246999027b3197955_0x70a08231\n",
+      "msg.sender_ -> 0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0x55d398326f99059ff775485246999027b3197955_0xa9059cbb\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0x55d398326f99059ff775485246999027b3197955_0x70a08231\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0xa7c866743a4e159c658bb3c801472625c87c6b99_0x22c0d9f\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0xa7c866743a4e159c658bb3c801472625c87c6b99_0x902f1ac\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0x89bcc5ff88ee8575af62b111945624e22f56c0f3_0xa9059cbb\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0x89bcc5ff88ee8575af62b111945624e22f56c0f3_0x70a08231\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0xa7c866743a4e159c658bb3c801472625c87c6b99_0x22c0d9f\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0xa7c866743a4e159c658bb3c801472625c87c6b99_0x902f1ac\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0x55d398326f99059ff775485246999027b3197955_0xa9059cbb\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0x55d398326f99059ff775485246999027b3197955_0x70a08231\n     0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828_0x7ed1f1dd -> 0x55d398326f99059ff775485246999027b3197955_0x70a08231\n"
+    ],
+    "visited_contracts": [
+      "0x89bcc5ff88ee8575af62b111945624e22f56c0f3",
+      "0x55d398326f99059ff775485246999027b3197955",
+      "0xa7c866743a4e159c658bb3c801472625c87c6b99",
+      "0x2ac03375C7a3A3A58aA0A80ca82f3F777015C828",
+      "0xfeafe253802b77456b4627f8c2306a9cebb5d681"
+    ],
+    "visited_contracts_num": 5,
+    "visited_funcs": [
+      "0xd0a494e4",
+      "0x16eebd1e",
+      "0xabe7f1ab",
+      "0x902f1ac",
+      "0x22c0d9f",
+      "0x70a08231",
+      "0xa9059cbb",
+      "0x7ed1f1dd"
+    ],
+    "visited_funcs_num": 8,
+    "max_call_depth": 1,
+    "contract_funcsigs": [
+      "0x00000000",
+      "__function_selector__",
+      "0x7ed1f1dd",
+      "0x16eebd1e",
+      "0xabe7f1ab"
+    ],
+    "contract_funcsigs_external_call": [
+      "__function_selector__",
+      "0x7ed1f1dd",
+      "0x16eebd1e",
+      "0xabe7f1ab"
+    ],
+    "sensitive_callsigs": [
+      "0xa9059cbb"
+    ],
+    "overlap": {
+      "has_overlap": false,
+      "overlap_external_call": []
+    },
+    "reentrancy_path_info": {}
+  }
+}

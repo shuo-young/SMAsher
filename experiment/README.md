@@ -12,11 +12,19 @@
 -   eth.csv: attributes of analysis results
 -   tp.tar.gz: outputs of attacker contracts
 
-`comparison`: call paths recovery comparison with BlockWatchdog
+`comparison`: comparison experiment with other tools
 
--   bsc: BW outputs of AC on BSC
--   eth: BW outputs of AC on ETH
--   analysis_script.py: script for data analysis
+- BlockWatchdog: detection and call paths recovery comparison with BlockWatchdog
+  -   bsc: BW outputs of AC on BSC
+  -   eth: BW outputs of AC on ETH
+  -   analysis_script.py: script for data analysis
+- LookAhead
+  - bsc.json: detection res on bsc dataset
+  - eth.json: detection res on eth dataset
+  - other scripts for comparison
+- SmartCat
+  - detect_res: detection res of SmartCat on both bsc and eth dataset
+  - run.sh: script for batch running for comparison
 
 `dataprocess`: scripts for experimental result analysis
 

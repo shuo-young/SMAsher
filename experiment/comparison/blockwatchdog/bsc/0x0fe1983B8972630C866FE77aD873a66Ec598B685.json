@@ -1,0 +1,53 @@
+{
+  "0x0fe1983B8972630C866FE77aD873a66Ec598B685": {
+    "is_attack": false,
+    "warning": "medium",
+    "attack_matrix": {
+      "br": false,
+      "dos": false,
+      "reentrancy": false
+    },
+    "analysis_loc": "runtimebin",
+    "platform": "ETH",
+    "block_number": 3810000,
+    "time": 4.003851268440485,
+    "semantic_features": {
+      "op_creation": {
+        "op_multicreate": false,
+        "op_solecreate": false
+      },
+      "op_selfdestruct": false,
+      "op_env": false
+    },
+    "external_call": {
+      "externalcall_inhook": false,
+      "externalcall_infallback": false,
+      "hooks_focused": [
+        "tokensReceived",
+        "transferFrom",
+        "tokensToSend",
+        "onERC721Received",
+        "onERC1155Received",
+        "canImplementInterfaceForAddress",
+        "delegatedTransferERC20",
+        "onTokenTransfer",
+        "onFlashLoan",
+        "uniswapV2Call"
+      ]
+    },
+    "call_paths": [],
+    "visited_contracts": [],
+    "visited_contracts_num": 0,
+    "visited_funcs": [],
+    "visited_funcs_num": 0,
+    "max_call_depth": 0,
+    "contract_funcsigs": [],
+    "contract_funcsigs_external_call": [],
+    "sensitive_callsigs": [],
+    "overlap": {
+      "has_overlap": false,
+      "overlap_external_call": []
+    },
+    "reentrancy_path_info": {}
+  }
+}
