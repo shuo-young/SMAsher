@@ -1,0 +1,202 @@
+{
+  "0x193e045bee45c7573ff89b12601c745af739ce67": {
+    "is_attack": true,
+    "warning": "high",
+    "attack_matrix": {
+      "br": false,
+      "dos": false,
+      "reentrancy": true
+    },
+    "analysis_loc": "runtimebin",
+    "platform": "ETH",
+    "block_number": 19250000,
+    "time": 433.666941318661,
+    "semantic_features": {
+      "op_creation": {
+        "op_multicreate": false,
+        "op_solecreate": true
+      },
+      "op_selfdestruct": false,
+      "op_env": false
+    },
+    "external_call": {
+      "externalcall_inhook": false,
+      "externalcall_infallback": false,
+      "hooks_focused": [
+        "tokensReceived",
+        "transferFrom",
+        "tokensToSend",
+        "onERC721Received",
+        "onERC1155Received",
+        "canImplementInterfaceForAddress",
+        "delegatedTransferERC20",
+        "onTokenTransfer",
+        "onFlashLoan",
+        "uniswapV2Call"
+      ]
+    },
+    "call_paths": [
+      "msg.sender_ -> 0x193e045bee45c7573ff89b12601c745af739ce67_0xfa461e33\n",
+      "msg.sender_ -> 0x193e045bee45c7573ff89b12601c745af739ce67_0xd75d7ccf\n",
+      "msg.sender_ -> 0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x3850c7bd\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08\n          0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08 -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08\n          0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08 -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08\n          0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08 -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08\n          0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0x128acb08 -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27_0xdfe1681\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0xdfe1681\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x3850c7bd\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08\n          0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08 -> 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48_0x70a08231\n               0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x70a08231 -> 0x43506849d7c04f9138d1a2050bbf3a0c054402dd_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08\n          0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08 -> 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08\n          0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08 -> 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08\n          0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640_0x128acb08 -> 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48_0x70a08231\n          0x193e045bee45c7573ff89b12601c745af739ce67_0x70a08231 -> 0x43506849d7c04f9138d1a2050bbf3a0c054402dd_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x5a6a4d54456819380173272a5e8e9b9904bdf41b_0xa6417ed6\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0xf1676d37\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x8078198fc424986ae89ce4a910fc109587b6abf3_0x95ea7b3\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0xc4ad29ba4b3c580e6d59105fff484999997675ff_0x95ea7b3\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0xdac17f958d2ee523a2206206994597c13d831ec7_0x95ea7b3\n          0xdac17f958d2ee523a2206206994597c13d831ec7_0x95ea7b3 -> 0x0000000000000000000000000000000000000000_0xaee92d33\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x95ea7b3\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x95ea7b3\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2_0x2e1a7d4d\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0xa9059cbb\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x5f4bd64b -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x70a08231\n",
+      "msg.sender_ -> 0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0x2b9446c\n          0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0x2b9446c -> 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2_0xd0e30db0\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x8078198fc424986ae89ce4a910fc109587b6abf3_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x8078198fc424986ae89ce4a910fc109587b6abf3_0xb6b55f25\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xc4ad29ba4b3c580e6d59105fff484999997675ff_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xd51a44d3fae010294c616388b506acda1bfaae46_0x4515cef3\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xdac17f958d2ee523a2206206994597c13d831ec7_0x70a08231\n          0xdac17f958d2ee523a2206206994597c13d831ec7_0x70a08231 -> 0x0000000000000000000000000000000000000000_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xdac17f958d2ee523a2206206994597c13d831ec7_0x70a08231\n          0xdac17f958d2ee523a2206206994597c13d831ec7_0x70a08231 -> 0x0000000000000000000000000000000000000000_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x5a6a4d54456819380173272a5e8e9b9904bdf41b_0xa6417ed6\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x15294c40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x15294c40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x8285ef40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x15294c40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x8285ef40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x8285ef40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x15294c40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x15294c40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x48e4163e\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x15294c40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x48e4163e\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x7ef40455\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0xa9059cbb\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0xa9059cbb\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3_0x70a08231\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0x97da6d30\n          0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0x97da6d30 -> 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2_0x2e1a7d4d\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0xf7888aec\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x4b8a3529\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0xf7888aec\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x860ffea1\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x8285ef40\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0x2b9446c\n          0xd96f48665a1410c0cd669a88898eca36b9fc2cce_0x2b9446c -> 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2_0xd0e30db0\n     0x193e045bee45c7573ff89b12601c745af739ce67_0x23e30c8b -> 0x7259e152103756e1616a77ae982353c3751a6a90_0x8285ef40\n"
+    ],
+    "visited_contracts": [
+      "0xd51a44d3fae010294c616388b506acda1bfaae46",
+      "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640",
+      "0x0000000000000000000000000000000000000000",
+      "0xd96f48665a1410c0cd669a88898eca36b9fc2cce",
+      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "0x43506849d7c04f9138d1a2050bbf3a0c054402dd",
+      "0xc4ad29ba4b3c580e6d59105fff484999997675ff",
+      "0x5a6a4d54456819380173272a5e8e9b9904bdf41b",
+      "0x193e045bee45c7573ff89b12601c745af739ce67",
+      "0x7259e152103756e1616a77ae982353c3751a6a90",
+      "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3",
+      "0x298b7c5e0770d151e4c5cf6cca4dae3a3ffc8e27",
+      "0x8078198fc424986ae89ce4a910fc109587b6abf3"
+    ],
+    "visited_contracts_num": 15,
+    "visited_funcs": [
+      "0x8285ef40",
+      "0xd0e30db0",
+      "0xf1676d37",
+      "0x4515cef3",
+      "0xd75d7ccf",
+      "0x23e30c8b",
+      "0x15294c40",
+      "0x4b8a3529",
+      "0xa9059cbb",
+      "0xaee92d33",
+      "0xa6417ed6",
+      "0x2b9446c",
+      "0x48e4163e",
+      "0xf7888aec",
+      "0xfa461e33",
+      "0x95ea7b3",
+      "0xb6b55f25",
+      "0x3850c7bd",
+      "0x70a08231",
+      "0xdfe1681",
+      "0x97da6d30",
+      "0x2e1a7d4d",
+      "0x7ef40455",
+      "0x5f4bd64b",
+      "0x128acb08",
+      "0x860ffea1"
+    ],
+    "visited_funcs_num": 26,
+    "max_call_depth": 3,
+    "contract_funcsigs": [
+      "0x00000000",
+      "__function_selector__",
+      "0x23e30c8b",
+      "0x5f4bd64b",
+      "0xd75d7ccf",
+      "0xfa461e33"
+    ],
+    "contract_funcsigs_external_call": [
+      "__function_selector__",
+      "0x23e30c8b",
+      "0x5f4bd64b",
+      "0xd75d7ccf",
+      "0xfa461e33"
+    ],
+    "sensitive_callsigs": [
+      "0x23e30c8b",
+      "0xa9059cbb",
+      "0x18160ddd",
+      "0x23b872dd",
+      "0x70a08231",
+      "0x00000000"
+    ],
+    "overlap": {
+      "has_overlap": true,
+      "overlap_external_call": [
+        "0x23e30c8b"
+      ]
+    },
+    "reentrancy_path_info": {
+      "0x23e30c8b": {
+        "victim_call": [
+          {
+            "caller": "0xd96f48665a1410c0cd669a88898eca36b9fc2cce",
+            "caller_callback_funcSign": "0x5f4bd64b"
+          }
+        ],
+        "reenter_call": [
+          {
+            "reenter_target": "0x7259e152103756e1616a77ae982353c3751a6a90",
+            "reenter_funcSign": "0x8285ef40"
+          },
+          {
+            "reenter_target": "0xd96f48665a1410c0cd669a88898eca36b9fc2cce",
+            "reenter_funcSign": "0x2b9446c"
+          },
+          {
+            "reenter_target": "0x7259e152103756e1616a77ae982353c3751a6a90",
+            "reenter_funcSign": "0x860ffea1"
+          },
+          {
+            "reenter_target": "0xd96f48665a1410c0cd669a88898eca36b9fc2cce",
+            "reenter_funcSign": "0xf7888aec"
+          },
+          {
+            "reenter_target": "0x7259e152103756e1616a77ae982353c3751a6a90",
+            "reenter_funcSign": "0x4b8a3529"
+          },
+          {
+            "reenter_target": "0xd96f48665a1410c0cd669a88898eca36b9fc2cce",
+            "reenter_funcSign": "0x97da6d30"
+          },
+          {
+            "reenter_target": "0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3",
+            "reenter_funcSign": "0x70a08231"
+          },
+          {
+            "reenter_target": "0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3",
+            "reenter_funcSign": "0xa9059cbb"
+          },
+          {
+            "reenter_target": "0x7259e152103756e1616a77ae982353c3751a6a90",
+            "reenter_funcSign": "0x7ef40455"
+          },
+          {
+            "reenter_target": "0x7259e152103756e1616a77ae982353c3751a6a90",
+            "reenter_funcSign": "0x48e4163e"
+          },
+          {
+            "reenter_target": "0x7259e152103756e1616a77ae982353c3751a6a90",
+            "reenter_funcSign": "0x15294c40"
+          },
+          {
+            "reenter_target": "0x5a6a4d54456819380173272a5e8e9b9904bdf41b",
+            "reenter_funcSign": "0xa6417ed6"
+          },
+          {
+            "reenter_target": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "reenter_funcSign": "0x70a08231"
+          },
+          {
+            "reenter_target": "0xd51a44d3fae010294c616388b506acda1bfaae46",
+            "reenter_funcSign": "0x4515cef3"
+          },
+          {
+            "reenter_target": "0xc4ad29ba4b3c580e6d59105fff484999997675ff",
+            "reenter_funcSign": "0x70a08231"
+          },
+          {
+            "reenter_target": "0x8078198fc424986ae89ce4a910fc109587b6abf3",
+            "reenter_funcSign": "0xb6b55f25"
+          },
+          {
+            "reenter_target": "0x8078198fc424986ae89ce4a910fc109587b6abf3",
+            "reenter_funcSign": "0x70a08231"
+          }
+        ]
+      }
+    }
+  }
+}
