@@ -354,6 +354,7 @@ plt.scatter(
     subset["time"],
     color="red",
     alpha=0.6,
+    marker="x",
     label=f"Attacker Contract",
 )
 subset = df[df["color"] == "black"]
@@ -379,6 +380,7 @@ plt.scatter(
     subset["time"],
     color="red",
     alpha=0.6,
+    marker="x",
     label=f"Attacker Contract",
 )
 subset = df[df["color"] == "black"]
@@ -387,6 +389,7 @@ plt.scatter(
     subset["time"],
     color="black",
     alpha=0.6,
+    marker="o",
     label=f"Normal Contract",
 )
 # plt.xlabel("Visited Contracts Num", fontsize=16)
